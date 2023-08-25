@@ -28,7 +28,7 @@ classdef FlojoyCloud
                 case {'Matrix','DataFrame','Grayscale'}
                     payload.data.m = dc;
                 case 'OrderedPair'
-                    assert(isa(dc, "struct"), 'DataContainer should be class "structure"')
+                    assert(isstruct(dc), 'DataContainer should be class "structure"')
                     assert(isfield(dc, 'x'), 'Field "x" missing from DataContainer')
                     assert(isfield(dc, 'y'), 'Field "y" missing from DataContainer')
                     payload.data.x = dc.x;
@@ -107,44 +107,6 @@ classdef FlojoyCloud
             r = dc;
         end
 
-        function r = store_dc(obj, dc, dc_type)
-            % Store a DataContainer in the cloud.
-            import webread.*
-            import matlab.net.*
-            headers = {'api_key' obj.api_key};
-            options = weboptions('HeaderFields', headers, 'Timeout', 30, RequestMethod='POST');
-            uri = "https://cloud.flojoy.ai/api/v1/dcs";
-            uri = matlab.net.URI(uri);
-            payload = obj.create_payload(dc, dc_type);
-            response = webwrite(uri, payload, options);
-            message = "Successfully sent DataContainer with ID: %s\n";
-            fprintf(message,response.dc_id);
-            r = response.dc_id;
-        end
-
-        function r = list_dcs(obj, size)
-            % List the number of DataContainers specified.
-            % Trying to list more DataContainers than exist will cause an error.
-            import webread.*
-            import matlab.net.*
-            headers = {'api_key' obj.api_key};
-            options = weboptions('HeaderFields', headers, RequestMethod='GET');
-            uri = "https://cloud.flojoy.ai/api/v1/dcs";
-            uri = matlab.net.URI(uri);
-
-            try
-                response = webread(uri, 'size', size, 'inbox', 'true', options);
-                r = response.data;
-            catch ME
-                switch ME.identifier
-                    case 'MATLAB:webservices:HTTP500StatusCodeError'
-                        warning('HTTP Error 500: Reducing the number of DataContainers to list may fix this issue.')
-                    otherwise
-                        rethrow(ME)
-                end
-            end
-        end
-
         function r = create_measurement(obj, name, privacy)
             % Create a measurement 'folder' to store DataContainers in.
             % Measurement privacy can be set to private or public.
@@ -190,18 +152,35 @@ classdef FlojoyCloud
             r = response;
         end
 
-        function r = store_in_measurement(obj, dc, dc_type, meas_id)
-            % Store a DataContainer in the measurement specified.
+        function r = rename_measurement(obj, meas_id, name)
+            % Rename the specified measurement.
             import webread.*
             import matlab.net.*
             headers = {'api_key' obj.api_key};
-            options = weboptions('HeaderFields', headers, RequestMethod='POST');
+            options = weboptions('HeaderFields', headers, RequestMethod='PATCH');
             urispec = "https://cloud.flojoy.ai/api/v1/measurements/%s";
+            uri = sprintf(urispec,meas_id);
+            uri = matlab.net.URI(uri);
+            payload = struct();
+            payload.name = char(name);
+            response = webwrite(uri, payload, options);
+            r = response;
+        end
+
+        function r = store_dc(obj, dc, dc_type, meas_id)
+            % Store a DataContainer in the cloud in a measurement.
+            import webread.*
+            import matlab.net.*
+            headers = {'api_key' obj.api_key};
+            options = weboptions('HeaderFields', headers, 'Timeout', 30, RequestMethod='POST');
+            urispec = "https://cloud.flojoy.ai/api/v1/dcs/add/%s";
             uri = sprintf(urispec,meas_id);
             uri = matlab.net.URI(uri);
             payload = obj.create_payload(dc, dc_type);
             response = webwrite(uri, payload, options);
-            r = response;
+            message = "Successfully sent DataContainer with ID: %s\n";
+            fprintf(message,response.ref);
+            r = response.ref;
         end
     end
 end

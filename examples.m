@@ -13,21 +13,8 @@ import flojoy.*
 cloud = FlojoyCloud;
 cloud.api_key = loadflojoyconfig;
 
-% Uncomment the example sections you want to run. 
-
-%% 
-
-% Creating, storing and loading example dataset.
-
-% Simple example dataset to save.
-data = [12 14; 5 12];
-dc_type = "Matrix";
-
-% Store the example dataset to the cloud.
-dc_id = cloud.store_dc(data, dc_type);
-
-% Load the example dataset from the cloud.
-cloud.fetch_dc(dc_id)
+% First you must create a measurement to store data in.
+meas_id = cloud.create_measurement('default');
 
 %% 
 
@@ -37,23 +24,16 @@ cloud.fetch_dc(dc_id)
 data = [12 14; 5 12];
 dc_type = "Matrix";
 
-% Create a measurement folder in the cloud with the name specified.
-meas_id = cloud.create_measurement('default');
-
 % Store a datacontainer in the created measurement folder.
-cloud.store_in_measurement(data, dc_type, meas_id);
+dcid = cloud.store_dc(data, dc_type, meas_id);
 
-% Fetch a measurement folder in the cloud with the id specified.
-measurement = cloud.fetch_measurement(meas_id);
-disp(measurement)
+% You can fetch a DataContainer without specifying the measurement ID.
+dc = cloud.fetch_dc(dcid);
+disp(dc)
 
 %% 
 
-% Listing multiple measurements and DataContainers
-
-% List 10 (unless there's less) DataContainers stored in the cloud.
-dc_list = cloud.list_dcs(10);
-disp(dc_list)
+% Listing multiple measurements
 
 % List the number of measurements specified.
 meas_list = cloud.list_measurement(10);
@@ -67,12 +47,13 @@ disp(meas_list)
 data = [12 14; 5 12];
 dc_type = "Grayscale";
 
-% Store the example dataset to the cloud.
-dc_id = cloud.store_dc(data, dc_type);
+% Store a datacontainer in the created measurement folder.
+dcid = cloud.store_dc(data, dc_type, meas_id);
 
-% Load the example dataset from the cloud.
-dc = cloud.fetch_dc(dc_id);
-dc = cloud.to_matlab(dc)
+% You can fetch a DataContainer without specifying the measurement ID.
+dc = cloud.fetch_dc(dcid);
+dc = cloud.to_matlab(dc);
+disp(dc)
 
 %% 
 
@@ -80,12 +61,13 @@ dc = cloud.to_matlab(dc)
 data = [12 14; 5 12];
 dc_type = "Matrix";
 
-% Store the example dataset to the cloud.
-dc_id = cloud.store_dc(data, dc_type);
+% Store a datacontainer in the created measurement folder.
+dcid = cloud.store_dc(data, dc_type, meas_id);
 
-% Load the example dataset from the cloud.
-dc = cloud.fetch_dc(dc_id);
-dc = cloud.to_matlab(dc)
+% You can fetch a DataContainer without specifying the measurement ID.
+dc = cloud.fetch_dc(dcid);
+dc = cloud.to_matlab(dc);
+disp(dc)
 
 %% 
 
@@ -94,27 +76,29 @@ op.x = linspace(0,2*pi);
 op.y = sin(op.x);
 dc_type = "OrderedPair";
 
-% Store the example dataset to the cloud.
-dc_id = cloud.store_dc(op, dc_type);
+% Store a datacontainer in the created measurement folder.
+dcid = cloud.store_dc(op, dc_type, meas_id);
 
-% Load the example dataset from the cloud.
-dc = cloud.fetch_dc(dc_id);
-dc = cloud.to_matlab(dc)
+% You can fetch a DataContainer without specifying the measurement ID.
+dc = cloud.fetch_dc(dcid);
+dc = cloud.to_matlab(dc);
+disp(dc)
 
 %% 
 
 % Simple example dataset to save.
-op.x = linspace(0,2*pi);
-op.y = sin(op.x);
-op.z = sin(op.x);
+ot.x = linspace(0,2*pi);
+ot.y = sin(op.x);
+ot.z = sin(op.x);
 dc_type = "OrderedTriple";
 
-% Store the example dataset to the cloud.
-dc_id = cloud.store_dc(op, dc_type);
+% Store a datacontainer in the created measurement folder.
+dcid = cloud.store_dc(ot, dc_type, meas_id);
 
-% Load the example dataset from the cloud.
-dc = cloud.fetch_dc(dc_id);
-dc = cloud.to_matlab(dc)
+% You can fetch a DataContainer without specifying the measurement ID.
+dc = cloud.fetch_dc(dcid);
+dc = cloud.to_matlab(dc);
+disp(dc)
 
 %% 
 
@@ -123,7 +107,7 @@ image = imread('ngc6543a.jpg');
 dc_type = "Image";
 
 % Store the example dataset to the cloud.
-dc_id = cloud.store_dc(image, dc_type);
+dc_id = cloud.store_dc(image, dc_type, meas_id);
 
 % Load the example dataset from the cloud.
 dc = cloud.fetch_dc(dc_id);
@@ -136,12 +120,13 @@ size(dc)
 sca = 2.1;
 dc_type = "Scalar";
 
-% Store the example dataset to the cloud.
-dc_id = cloud.store_dc(sca, dc_type);
+% Store a datacontainer in the created measurement folder.
+dcid = cloud.store_dc(sca, dc_type, meas_id);
 
-% Load the example dataset from the cloud.
-dc = cloud.fetch_dc(dc_id);
-dc = cloud.to_matlab(dc)
+% You can fetch a DataContainer without specifying the measurement ID.
+dc = cloud.fetch_dc(dcid);
+dc = cloud.to_matlab(dc);
+disp(dc)
 
 %% 
 
@@ -149,9 +134,10 @@ dc = cloud.to_matlab(dc)
 vec = [1, 2, 3, 4];
 dc_type = "Vector";
 
-% Store the example dataset to the cloud.
-dc_id = cloud.store_dc(vec, dc_type);
+% Store a datacontainer in the created measurement folder.
+dcid = cloud.store_dc(vec, dc_type, meas_id);
 
-% Load the example dataset from the cloud.
-dc = cloud.fetch_dc(dc_id);
-dc = cloud.to_matlab(dc)
+% You can fetch a DataContainer without specifying the measurement ID.
+dc = cloud.fetch_dc(dcid);
+dc = cloud.to_matlab(dc);
+disp(dc)
